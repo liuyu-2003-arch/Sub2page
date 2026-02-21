@@ -5,12 +5,31 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import SrtParser from "srt-parser-2";
+import { GoogleGenAI } from "@google/genai";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 3000;
+
+// Initialize Gemini
+const genAI = process.env.API_KEY ? new GoogleGenAI({ apiKey: process.env.API_KEY }) : null;
+
+async function generateSummary(text: string) {
+  if (!genAI) return "A cinematic transcript captured in time.";
+  try {
+    const model = genAI.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: [{ parts: [{ text: `Summarize this movie/video transcript in one artistic, poetic sentence: ${text.substring(0, 5000)}` }] }],
+    });
+    const response = await model;
+    return response.text || "A cinematic transcript captured in time.";
+  } catch (err) {
+    console.error("Gemini error:", err);
+    return "A cinematic transcript captured in time.";
+  }
+}
 
 // Ensure subtitle directory exists
 const subtitleDir = path.join(__dirname, "subtitle");
@@ -23,7 +42,7 @@ const upload = multer({ storage: storage });
 
 const parser = new SrtParser();
 
-function generateHtml(title: string, subtitleData: any[], seed: string) {
+function generateHtml(title: string, subtitleData: any[], seed: string, summary: string) {
   const itemsHtml = subtitleData.map(item => `
     <div class="subtitle-item" id="cue-${item.id}">
       <div class="time">${item.startTime}</div>
@@ -38,6 +57,7 @@ function generateHtml(title: string, subtitleData: any[], seed: string) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title}</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cpath d='M9 9l6 3-6 3V9z'%3E%3C/path%3E%3C/svg%3E" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;1,400&family=Libre+Baskerville:ital@0;1&family=Space+Grotesk:wght@300;400;600&display=swap');
@@ -234,7 +254,16 @@ function generateHtml(title: string, subtitleData: any[], seed: string) {
 
     <div class="container">
         <header>
+            <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 40px; height: 40px; background: black; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M9 9l6 3-6 3V9z"></path></svg>
+                </div>
+                <span style="font-family: 'Anton', sans-serif; font-size: 1.2rem; letter-spacing: 0.2em; text-transform: uppercase;">SUB.GEN</span>
+            </div>
             <h1>${title}</h1>
+            <p style="margin-top: 2rem; font-size: 1.1rem; font-style: italic; color: rgba(0,0,0,0.6); max-width: 600px; line-height: 1.6;">
+                "${summary}"
+            </p>
             <div class="meta">Transcript / Subtitles / Archive</div>
         </header>
         <main>
@@ -370,7 +399,11 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
       sanitizedName = `${sanitizedName}-${Math.random().toString(36).substring(2, 7)}`;
     }
     
-    const htmlContent = generateHtml(originalName, subtitleData, sanitizedName);
+    // Generate AI Summary
+    const fullText = subtitleData.map(d => d.text).join(" ");
+    const summary = await generateSummary(fullText);
+    
+    const htmlContent = generateHtml(originalName, subtitleData, sanitizedName, summary);
     const fileName = `${sanitizedName}.html`;
     const filePath = path.join(subtitleDir, fileName);
 
@@ -411,3 +444,5 @@ async function startServer() {
 }
 
 startServer();
+
+export default app;
