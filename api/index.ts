@@ -41,7 +41,7 @@ const upload = multer({ storage: storage });
 
 const parser = new SrtParser();
 
-function generateHtml(title: string, subtitleData: any[], seed: string, summary: string) {
+function generateHtml(title: string, subtitleData: any[], seed: string, summary: string, album: string = "Untitled Collection", tags: string = "Archive, Transcript") {
   const itemsHtml = subtitleData.map(item => `
     <div class="subtitle-item" id="cue-${item.id}">
       <div class="time">${item.startTime}</div>
@@ -322,7 +322,7 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
             <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.05); font-size: 0.7rem; color: rgba(0,0,0,0.5);">
                 Tip: Click on any text (Title, Album, Tags, or Subtitles) to edit it directly on the page.
             </div>
-            <button class="style-btn" style="align-self: flex-end; margin-top: 1rem; background: black; color: white; padding: 0.75rem 2rem; border-radius: 100px;" onclick="toggleEditor()">Done</button>
+            <button class="style-btn" style="align-self: flex-end; margin-top: 1rem; background: black; color: white; padding: 0.75rem 2rem; border-radius: 100px;" onclick="saveChanges()">Save Changes</button>
         </div>
 
         <header>
@@ -339,11 +339,11 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
             <div class="meta">
                 <div class="meta-item">
                     <span class="meta-label">Album</span>
-                    <span contenteditable="true" class="editable" id="meta-album">Untitled Collection</span>
+                    <span contenteditable="true" class="editable" id="meta-album">${album}</span>
                 </div>
                 <div class="meta-item">
                     <span class="meta-label">Tags</span>
-                    <span contenteditable="true" class="editable" id="meta-tags">Archive, Transcript</span>
+                    <span contenteditable="true" class="editable" id="meta-tags">${tags}</span>
                 </div>
                 <div class="meta-item">
                     <span class="meta-label">Type</span>
@@ -363,6 +363,61 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
         function toggleEditor() {
             const panel = document.getElementById('editor-panel');
             panel.classList.toggle('visible');
+        }
+
+        async function saveChanges() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Saving...';
+            btn.disabled = true;
+
+            const data = {
+                title: document.getElementById('page-title').textContent,
+                summary: document.getElementById('page-summary').textContent.replace(/^"|"$/g, ''),
+                album: document.getElementById('meta-album').textContent,
+                tags: document.getElementById('meta-tags').textContent,
+                subtitleData: Array.from(document.querySelectorAll('.subtitle-item')).map(item => ({
+                    id: item.id.replace('cue-', ''),
+                    startTime: item.querySelector('.time').textContent.split(' — ')[0],
+                    endTime: item.querySelector('.time').textContent.split(' — ')[1] || '',
+                    text: item.querySelector('.text').textContent
+                }))
+            };
+
+            // Fix startTime/endTime if they are just one string in the UI
+            data.subtitleData = Array.from(document.querySelectorAll('.subtitle-item')).map((item, i) => {
+                const timeText = item.querySelector('.time').textContent;
+                return {
+                    id: item.id.replace('cue-', ''),
+                    startTime: timeText,
+                    text: item.querySelector('.text').textContent
+                };
+            });
+
+            try {
+                const response = await fetch(\`/api/subtitles/${seed}/save\`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (response.ok) {
+                    btn.textContent = 'Saved!';
+                    setTimeout(() => {
+                        btn.textContent = 'Save Changes';
+                        btn.disabled = false;
+                        toggleEditor();
+                    }, 1000);
+                } else {
+                    alert('Failed to save changes');
+                    btn.textContent = 'Error';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Network error');
+                btn.textContent = 'Error';
+                btn.disabled = false;
+            }
         }
 
         function updateStyle(prop, value, btn) {
@@ -461,6 +516,27 @@ app.patch("/api/subtitles/:name", (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: "Failed to rename file" });
+  }
+});
+
+// Save changes to a subtitle
+app.post("/api/subtitles/:name/save", (req, res) => {
+  const { name } = req.params;
+  const { title, summary, album, tags, subtitleData } = req.body;
+  
+  const filePath = path.join(subtitleDir, `${name}.html`);
+  
+  try {
+    if (fs.existsSync(filePath)) {
+      const htmlContent = generateHtml(title, subtitleData, name, summary, album, tags);
+      fs.writeFileSync(filePath, htmlContent);
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ error: "File not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to save changes" });
   }
 });
 
