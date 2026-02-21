@@ -152,24 +152,34 @@ export default function App() {
 
       <main className="pt-32 pb-20 px-8 max-w-[1400px] mx-auto">
         {/* Hero Section */}
-        <section className="mb-32 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <h1 className="editorial-title">
-              Crafted<br />
-              <span className="text-transparent" style={{ WebkitTextStroke: '1px black' }}>Subtitles</span>
-            </h1>
-          </motion.div>
+        <section className="mb-32 relative h-[60vh] flex items-center overflow-hidden rounded-[40px]">
+          <div className="absolute inset-0 z-0">
+            <img 
+              src="https://picsum.photos/seed/subgen/1920/1080?grayscale" 
+              alt=""
+              className="w-full h-full object-cover opacity-60"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-white via-white/40 to-transparent" />
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12 items-end">
+          <div className="relative z-10 px-12">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <h1 className="editorial-title">
+                Crafted<br />
+                <span className="text-transparent" style={{ WebkitTextStroke: '1px black' }}>Subtitles</span>
+              </h1>
+            </motion.div>
+            
             <motion.p 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 1 }}
-              className="text-2xl font-light leading-relaxed text-gray-600 max-w-xl"
+              className="text-2xl font-light leading-relaxed text-gray-800 max-w-xl mt-8"
             >
               Transforming raw data into cinematic reading experiences. 
               Minimal, focused, and designed for the modern web.

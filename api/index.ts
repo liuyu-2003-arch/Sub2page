@@ -45,7 +45,7 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
   const itemsHtml = subtitleData.map(item => `
     <div class="subtitle-item" id="cue-${item.id}">
       <div class="time">${item.startTime}</div>
-      <div class="text">${item.text}</div>
+      <div class="text editable" contenteditable="true">${item.text}</div>
     </div>
   `).join("");
 
@@ -121,6 +121,32 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
             letter-spacing: 0.4em;
             color: rgba(0, 0, 0, 0.4);
             margin-top: 2.5rem;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .meta-label {
+            font-size: 0.5rem;
+            opacity: 0.5;
+            letter-spacing: 0.1em;
+        }
+
+        .editable:hover {
+            outline: 1px dashed rgba(0,0,0,0.2);
+            outline-offset: 4px;
+            cursor: text;
+        }
+
+        .editable:focus {
+            outline: 1px solid black;
+            outline-offset: 4px;
+            background: rgba(0,0,0,0.02);
         }
 
         .subtitle-item {
@@ -277,19 +303,24 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
     
     <div class="container">
         <div id="editor-panel">
-            <div class="control-group">
-                <span class="control-label">Font</span>
-                <button class="style-btn" onclick="updateStyle('font-family', '\\'Playfair Display\\', serif', this)">Playfair</button>
-                <button class="style-btn" onclick="updateStyle('font-family', '\\'Libre Baskerville\\', serif', this)">Baskerville</button>
-                <button class="style-btn" onclick="updateStyle('font-family', '\\'Space Grotesk\\', sans-serif', this)">Grotesk</button>
-                <button class="style-btn" onclick="updateStyle('font-family', '\\'Inter\\', sans-serif', this)">Inter</button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="control-group">
+                    <span class="control-label">Font</span>
+                    <button class="style-btn" onclick="updateStyle('font-family', '\\'Playfair Display\\', serif', this)">Playfair</button>
+                    <button class="style-btn" onclick="updateStyle('font-family', '\\'Libre Baskerville\\', serif', this)">Baskerville</button>
+                    <button class="style-btn" onclick="updateStyle('font-family', '\\'Space Grotesk\\', sans-serif', this)">Grotesk</button>
+                    <button class="style-btn" onclick="updateStyle('font-family', '\\'Inter\\', sans-serif', this)">Inter</button>
+                </div>
+                <div class="control-group">
+                    <span class="control-label">Size</span>
+                    <button class="style-btn" onclick="updateStyle('font-size', '1.5rem', this)">Small</button>
+                    <button class="style-btn" onclick="updateStyle('font-size', '2.5rem', this)">Medium</button>
+                    <button class="style-btn" onclick="updateStyle('font-size', '3.5rem', this)">Large</button>
+                    <button class="style-btn" onclick="updateStyle('font-size', '4.5rem', this)">X-Large</button>
+                </div>
             </div>
-            <div class="control-group">
-                <span class="control-label">Size</span>
-                <button class="style-btn" onclick="updateStyle('font-size', '1.5rem', this)">Small</button>
-                <button class="style-btn" onclick="updateStyle('font-size', '2.5rem', this)">Medium</button>
-                <button class="style-btn" onclick="updateStyle('font-size', '3.5rem', this)">Large</button>
-                <button class="style-btn" onclick="updateStyle('font-size', '4.5rem', this)">X-Large</button>
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.05); font-size: 0.7rem; color: rgba(0,0,0,0.5);">
+                Tip: Click on any text (Title, Album, Tags, or Subtitles) to edit it directly on the page.
             </div>
             <button class="style-btn" style="align-self: flex-end; margin-top: 1rem; background: black; color: white; padding: 0.75rem 2rem; border-radius: 100px;" onclick="toggleEditor()">Done</button>
         </div>
@@ -301,11 +332,24 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
                 </div>
                 <span style="font-family: 'Anton', sans-serif; font-size: 1.2rem; letter-spacing: 0.2em; text-transform: uppercase;">SUB.GEN</span>
             </div>
-            <h1>${title}</h1>
-            <p style="margin-top: 2rem; font-size: 1.1rem; font-style: italic; color: rgba(0,0,0,0.6); max-width: 600px; line-height: 1.6;">
+            <h1 contenteditable="true" class="editable" id="page-title">${title}</h1>
+            <p contenteditable="true" class="editable" id="page-summary" style="margin-top: 2rem; font-size: 1.1rem; font-style: italic; color: rgba(0,0,0,0.6); max-width: 600px; line-height: 1.6;">
                 "${summary}"
             </p>
-            <div class="meta">Transcript / Subtitles / Archive</div>
+            <div class="meta">
+                <div class="meta-item">
+                    <span class="meta-label">Album</span>
+                    <span contenteditable="true" class="editable" id="meta-album">Untitled Collection</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Tags</span>
+                    <span contenteditable="true" class="editable" id="meta-tags">Archive, Transcript</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Type</span>
+                    <span>Subtitles</span>
+                </div>
+            </div>
         </header>
         <main>
             ${itemsHtml}
