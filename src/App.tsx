@@ -120,23 +120,23 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-white selection:text-black overflow-x-hidden">
+    <div className="min-h-screen bg-white text-black selection:bg-black selection:text-white overflow-x-hidden">
       <div className="noise-bg" />
       
       {/* Navigation / Header */}
-      <nav className="fixed top-0 left-0 w-full z-50 px-8 py-6 flex justify-between items-center bg-black/40 backdrop-blur-xl border-b border-white/5">
+      <nav className="fixed top-0 left-0 w-full z-50 px-8 py-6 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-black/5">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-black shadow-lg shadow-white/5">
+          <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center text-white shadow-lg shadow-black/10">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M9 9l6 3-6 3V9z"></path></svg>
           </div>
-          <span className="font-display text-xl uppercase tracking-widest text-white">SUB.GEN</span>
+          <span className="font-display text-xl uppercase tracking-widest text-black">SUB.GEN</span>
         </div>
         
         <div className="relative group">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-3 bg-white text-black px-6 py-3 rounded-full font-bold text-sm uppercase tracking-widest transition-all hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+            className="flex items-center gap-3 bg-black text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-widest transition-all hover:shadow-[0_0_30px_rgba(0,0,0,0.1)]"
           >
             {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
             {uploading ? 'Processing' : 'Upload Subtitle'}
@@ -160,7 +160,7 @@ export default function App() {
           >
             <h1 className="editorial-title">
               Crafted<br />
-              <span className="text-transparent" style={{ WebkitTextStroke: '1px white' }}>Subtitles</span>
+              <span className="text-transparent" style={{ WebkitTextStroke: '1px black' }}>Subtitles</span>
             </h1>
           </motion.div>
           
@@ -169,7 +169,7 @@ export default function App() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 1 }}
-              className="text-2xl font-light leading-relaxed text-gray-400 max-w-xl"
+              className="text-2xl font-light leading-relaxed text-gray-600 max-w-xl"
             >
               Transforming raw data into cinematic reading experiences. 
               Minimal, focused, and designed for the modern web.
@@ -200,15 +200,15 @@ export default function App() {
         {/* Grid List */}
         <section>
           <div className="flex items-center gap-4 mb-12">
-            <div className="h-[1px] flex-1 bg-white/10" />
-            <h2 className="font-serif italic text-3xl text-white">Archive</h2>
-            <div className="h-[1px] w-20 bg-white/10" />
+            <div className="h-[1px] flex-1 bg-black/10" />
+            <h2 className="font-serif italic text-3xl text-black">Archive</h2>
+            <div className="h-[1px] w-20 bg-black/10" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10 border border-white/10 overflow-hidden rounded-3xl shadow-2xl shadow-black/50">
+          <div className="grid grid-cols-1 gap-px bg-black/10 border border-black/10 overflow-hidden rounded-3xl shadow-2xl shadow-black/5">
             {files.length === 0 ? (
-              <div className="col-span-full py-40 text-center bg-[#0a0a0a]">
-                <p className="text-gray-600 uppercase tracking-[0.5em] text-sm">Empty Archive</p>
+              <div className="col-span-full py-40 text-center bg-white">
+                <p className="text-gray-400 uppercase tracking-[0.5em] text-sm">Empty Archive</p>
               </div>
             ) : (
               files.map((file, index) => (
@@ -217,12 +217,12 @@ export default function App() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.1 * index }}
-                  className="group relative aspect-[4/5] bg-[#0a0a0a] overflow-hidden flex flex-col justify-end hover:bg-white transition-all duration-700 cursor-pointer"
+                  className="group relative h-64 bg-white overflow-hidden flex flex-col justify-end hover:bg-black transition-all duration-700 cursor-pointer"
                 >
                   {/* Automatic Cover Image */}
-                  <div className="absolute inset-0 z-0 opacity-10 group-hover:opacity-30 transition-opacity duration-700">
+                  <div className="absolute inset-0 z-0 opacity-20 group-hover:opacity-40 transition-opacity duration-700">
                     <img 
-                      src={`https://picsum.photos/seed/${file.name}/800/1000?grayscale`} 
+                      src={`https://picsum.photos/seed/${file.name}/1200/400?grayscale`} 
                       alt=""
                       className="w-full h-full object-cover"
                       referrerPolicy="no-referrer"
@@ -231,27 +231,27 @@ export default function App() {
 
                   <div 
                     onClick={() => window.open(file.url, '_blank')}
-                    className="relative z-10 p-10 w-full bg-gradient-to-t from-black via-black/80 to-transparent group-hover:from-white group-hover:via-white group-hover:to-transparent transition-all duration-700"
+                    className="relative z-10 p-10 w-full bg-gradient-to-t from-white via-white/80 to-transparent group-hover:from-black group-hover:via-black group-hover:to-transparent transition-all duration-700"
                   >
-                    <div className="flex justify-between items-start mb-8">
-                      <span className="font-mono text-[10px] text-gray-600 group-hover:text-black/40">
+                    <div className="flex justify-between items-start mb-4">
+                      <span className="font-mono text-[10px] text-gray-400 group-hover:text-white/40">
                         0{index + 1}
                       </span>
                     </div>
 
-                    <div>
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                       <h3 
-                        className="text-3xl font-serif italic mb-4 text-white group-hover:text-black transition-colors line-clamp-2 leading-tight cursor-pointer"
+                        className="text-3xl font-serif italic text-black group-hover:text-white transition-colors line-clamp-1 leading-tight cursor-pointer"
                       >
                         {formatTitle(file.name)}
                       </h3>
                       
-                      <div className="flex items-center gap-4">
-                        <span className="text-[10px] uppercase tracking-widest text-gray-500 group-hover:text-black/60">
+                      <div className="flex items-center gap-4 shrink-0">
+                        <span className="text-[10px] uppercase tracking-widest text-gray-400 group-hover:text-white/60">
                           {new Date(file.mtime).toLocaleDateString()}
                         </span>
-                        <div className="h-px w-8 bg-white/10 group-hover:bg-black/20" />
-                        <span className="text-[10px] uppercase tracking-widest text-gray-500 group-hover:text-black/60">
+                        <div className="h-px w-8 bg-black/10 group-hover:bg-white/20" />
+                        <span className="text-[10px] uppercase tracking-widest text-gray-400 group-hover:text-white/60">
                           Archive
                         </span>
                       </div>
@@ -264,11 +264,11 @@ export default function App() {
         </section>
       </main>
 
-      <footer className="px-8 py-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
-        <div className="font-display text-4xl opacity-10 text-white">SUB.GEN</div>
+      <footer className="px-8 py-20 border-t border-black/5 flex flex-col md:flex-row justify-between items-center gap-8">
+        <div className="font-display text-4xl opacity-10 text-black">SUB.GEN</div>
         <div className="text-center md:text-right">
-          <p className="text-[10px] uppercase tracking-[0.4em] text-gray-500 mb-2">Designed for the future of reading</p>
-          <p className="text-xs text-gray-600">© {new Date().getFullYear()} All Rights Reserved</p>
+          <p className="text-[10px] uppercase tracking-[0.4em] text-gray-400 mb-2">Designed for the future of reading</p>
+          <p className="text-xs text-gray-500">© {new Date().getFullYear()} All Rights Reserved</p>
         </div>
       </footer>
     </div>

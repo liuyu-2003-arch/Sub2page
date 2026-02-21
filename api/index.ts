@@ -62,9 +62,9 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
         @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;1,400&family=Libre+Baskerville:ital@0;1&family=Space+Grotesk:wght@300;400;600&display=swap');
         
         :root {
-            --bg: #050505;
-            --text: #ffffff;
-            --accent: rgba(255, 255, 255, 0.05);
+            --bg: #ffffff;
+            --text: #000000;
+            --accent: rgba(0, 0, 0, 0.05);
             --font-size: 2.5rem;
             --font-family: 'Playfair Display', serif;
         }
@@ -100,7 +100,7 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
 
         header {
             margin-bottom: 15vh;
-            border-left: 1px solid white;
+            border-left: 1px solid black;
             padding-left: 2rem;
             position: relative;
             z-index: 10;
@@ -119,7 +119,7 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 0.4em;
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(0, 0, 0, 0.4);
             margin-top: 2.5rem;
         }
 
@@ -139,7 +139,7 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
             font-size: 0.65rem;
             font-weight: 600;
             letter-spacing: 0.2em;
-            color: rgba(255, 255, 255, 0.3);
+            color: rgba(0, 0, 0, 0.3);
             margin-bottom: 1rem;
         }
 
@@ -163,13 +163,12 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
         #editor-panel {
             margin-bottom: 4rem;
             padding: 2rem;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
+            background: rgba(0, 0, 0, 0.03);
             border-radius: 24px;
             display: none; /* Hidden by default */
             flex-direction: column;
             gap: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         #editor-panel.visible {
@@ -181,10 +180,8 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
             top: 2rem;
             right: 2rem;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
             padding: 0.75rem 1.5rem;
             border-radius: 100px;
             font-size: 0.7rem;
@@ -192,14 +189,14 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
             text-transform: uppercase;
             letter-spacing: 0.1em;
             cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
             transition: all 0.3s;
         }
 
         .toggle-editor-btn:hover {
             transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.1);
-            border-color: white;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: black;
         }
 
         .control-group {
@@ -214,14 +211,13 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
             text-transform: uppercase;
             letter-spacing: 0.2em;
             font-weight: 800;
-            color: rgba(255,255,255,0.3);
+            color: rgba(0,0,0,0.3);
             width: 80px;
         }
 
         .style-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
             padding: 0.5rem 1rem;
             border-radius: 8px;
             font-size: 0.75rem;
@@ -231,14 +227,14 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
         }
 
         .style-btn:hover {
-            border-color: white;
-            background: rgba(255, 255, 255, 0.1);
+            border-color: black;
+            background: #fafafa;
         }
 
         .style-btn.active {
-            background: white;
-            color: black;
-            border-color: white;
+            background: black;
+            color: white;
+            border-color: black;
         }
 
         footer {
@@ -280,13 +276,13 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
 
         <header>
             <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem;">
-                <div style="width: 40px; height: 40px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: black;">
+                <div style="width: 40px; height: 40px; background: black; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M9 9l6 3-6 3V9z"></path></svg>
                 </div>
-                <span style="font-family: 'Anton', sans-serif; font-size: 1.2rem; letter-spacing: 0.2em; text-transform: uppercase; color: white;">SUB.GEN</span>
+                <span style="font-family: 'Anton', sans-serif; font-size: 1.2rem; letter-spacing: 0.2em; text-transform: uppercase;">SUB.GEN</span>
             </div>
             <h1>${title}</h1>
-            <p style="margin-top: 2rem; font-size: 1.1rem; font-style: italic; color: rgba(255,255,255,0.6); max-width: 600px; line-height: 1.6;">
+            <p style="margin-top: 2rem; font-size: 1.1rem; font-style: italic; color: rgba(0,0,0,0.6); max-width: 600px; line-height: 1.6;">
                 "${summary}"
             </p>
             <div class="meta">Transcript / Subtitles / Archive</div>
