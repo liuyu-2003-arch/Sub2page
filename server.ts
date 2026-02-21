@@ -109,11 +109,11 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
 
         h1 {
             font-family: 'Anton', sans-serif;
-            font-size: clamp(3rem, 10vw, 6rem);
-            line-height: 0.9;
+            font-size: clamp(4rem, 15vw, 10rem);
+            line-height: 0.85;
             text-transform: uppercase;
             margin: 0;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.04em;
         }
 
         .meta {
@@ -121,7 +121,7 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
             text-transform: uppercase;
             letter-spacing: 0.4em;
             color: rgba(0, 0, 0, 0.4);
-            margin-top: 1.5rem;
+            margin-top: 2.5rem;
         }
 
         .subtitle-item {
@@ -162,29 +162,19 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
 
         /* Editor UI */
         #editor-panel {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            padding: 1rem 2rem;
-            border-radius: 100px;
+            margin-bottom: 4rem;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 24px;
             display: flex;
-            gap: 2rem;
-            align-items: center;
-            z-index: 10000;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            transition: opacity 0.3s, transform 0.3s;
-        }
-
-        #editor-panel:hover {
-            background: rgba(255, 255, 255, 1);
+            flex-direction: column;
+            gap: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .control-group {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             gap: 1rem;
         }
@@ -192,19 +182,32 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
         .control-label {
             font-size: 0.6rem;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-weight: 700;
-            color: rgba(0,0,0,0.4);
+            letter-spacing: 0.2em;
+            font-weight: 800;
+            color: rgba(0,0,0,0.3);
+            width: 80px;
         }
 
-        select, input[type="range"] {
-            background: transparent;
-            border: none;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.8rem;
+        .style-btn {
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
             font-weight: 600;
             cursor: pointer;
-            outline: none;
+            transition: all 0.2s;
+        }
+
+        .style-btn:hover {
+            border-color: black;
+            background: #fafafa;
+        }
+
+        .style-btn.active {
+            background: black;
+            color: white;
+            border-color: black;
         }
 
         footer {
@@ -217,17 +220,6 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
             color: rgba(0, 0, 0, 0.2);
             text-align: center;
         }
-
-        @media (max-width: 768px) {
-            #editor-panel {
-                width: 90%;
-                gap: 1rem;
-                padding: 1rem;
-                flex-direction: column;
-                border-radius: 20px;
-                bottom: 1rem;
-            }
-        }
     </style>
 </head>
 <body>
@@ -236,23 +228,24 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
         <img src="https://picsum.photos/seed/${seed}/1920/1080?grayscale" alt="" />
     </div>
     
-    <div id="editor-panel">
-        <div class="control-group">
-            <span class="control-label">Font</span>
-            <select id="font-select" onchange="updateStyle('font-family', this.value)">
-                <option value="'Playfair Display', serif">Playfair Display</option>
-                <option value="'Libre Baskerville', serif">Libre Baskerville</option>
-                <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
-                <option value="'Inter', sans-serif">Inter Sans</option>
-            </select>
-        </div>
-        <div class="control-group">
-            <span class="control-label">Size</span>
-            <input type="range" min="1" max="5" step="0.1" value="2.5" oninput="updateStyle('font-size', this.value + 'rem')">
-        </div>
-    </div>
-
     <div class="container">
+        <div id="editor-panel">
+            <div class="control-group">
+                <span class="control-label">Font</span>
+                <button class="style-btn" onclick="updateStyle('font-family', '\\'Playfair Display\\', serif', this)">Playfair</button>
+                <button class="style-btn" onclick="updateStyle('font-family', '\\'Libre Baskerville\\', serif', this)">Baskerville</button>
+                <button class="style-btn" onclick="updateStyle('font-family', '\\'Space Grotesk\\', sans-serif', this)">Grotesk</button>
+                <button class="style-btn" onclick="updateStyle('font-family', '\\'Inter\\', sans-serif', this)">Inter</button>
+            </div>
+            <div class="control-group">
+                <span class="control-label">Size</span>
+                <button class="style-btn" onclick="updateStyle('font-size', '1.5rem', this)">Small</button>
+                <button class="style-btn" onclick="updateStyle('font-size', '2.5rem', this)">Medium</button>
+                <button class="style-btn" onclick="updateStyle('font-size', '3.5rem', this)">Large</button>
+                <button class="style-btn" onclick="updateStyle('font-size', '4.5rem', this)">X-Large</button>
+            </div>
+        </div>
+
         <header>
             <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem;">
                 <div style="width: 40px; height: 40px; background: black; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
@@ -275,38 +268,38 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
     </div>
 
     <script>
-        function updateStyle(prop, value) {
+        function updateStyle(prop, value, btn) {
             document.documentElement.style.setProperty('--' + prop, value);
             localStorage.setItem('subgen-' + prop, value);
+            
+            // Update active state
+            if (btn) {
+                const group = btn.parentElement;
+                group.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
         }
 
         // Load saved styles
         window.onload = () => {
             const savedFont = localStorage.getItem('subgen-font-family');
             const savedSize = localStorage.getItem('subgen-font-size');
+            
             if (savedFont) {
                 document.documentElement.style.setProperty('--font-family', savedFont);
-                document.getElementById('font-select').value = savedFont;
+                const btn = Array.from(document.querySelectorAll('.style-btn')).find(b => b.textContent.toLowerCase().includes(savedFont.split("'")[1].split(" ")[0].toLowerCase()));
+                if (btn) btn.classList.add('active');
+            } else {
+                document.querySelectorAll('.control-group')[0].querySelectorAll('.style-btn')[0].classList.add('active');
             }
+            
             if (savedSize) {
                 document.documentElement.style.setProperty('--font-size', savedSize);
-                document.querySelector('input[type="range"]').value = savedSize.replace('rem', '');
-            }
-        };
-
-        // Hide editor on scroll
-        let lastScroll = 0;
-        window.onscroll = () => {
-            const currentScroll = window.pageYOffset;
-            const panel = document.getElementById('editor-panel');
-            if (currentScroll > lastScroll && currentScroll > 200) {
-                panel.style.opacity = '0.3';
-                panel.style.transform = 'translateX(-50%) translateY(20px)';
+                const btn = Array.from(document.querySelectorAll('.style-btn')).find(b => b.onclick.toString().includes(savedSize));
+                if (btn) btn.classList.add('active');
             } else {
-                panel.style.opacity = '1';
-                panel.style.transform = 'translateX(-50%) translateY(0)';
+                document.querySelectorAll('.control-group')[1].querySelectorAll('.style-btn')[1].classList.add('active');
             }
-            lastScroll = currentScroll;
         };
     </script>
 </body>
