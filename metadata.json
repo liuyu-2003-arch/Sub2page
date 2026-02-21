@@ -1,0 +1,5 @@
+{
+  "name": "Subtitle Web Generator",
+  "description": "Upload subtitle files and generate beautiful online web pages for reading and sharing.",
+  "requestFramePermissions": []
+}
