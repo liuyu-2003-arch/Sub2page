@@ -1,5 +1,4 @@
 import express from "express";
-import { createServer as createViteServer } from "vite";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -11,7 +10,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 3000;
 
 // Initialize Gemini
 const genAI = process.env.API_KEY ? new GoogleGenAI({ apiKey: process.env.API_KEY }) : null;
@@ -31,10 +29,10 @@ async function generateSummary(text: string) {
   }
 }
 
-// Ensure subtitle directory exists
-const subtitleDir = path.join(__dirname, "subtitle");
+// On Vercel, we must use /tmp for writing files
+const subtitleDir = process.env.VERCEL ? "/tmp/subtitle" : path.join(__dirname, "..", "subtitle");
 if (!fs.existsSync(subtitleDir)) {
-  fs.mkdirSync(subtitleDir);
+  fs.mkdirSync(subtitleDir, { recursive: true });
 }
 
 const storage = multer.memoryStorage();
@@ -320,6 +318,7 @@ app.use(express.json());
 // List all generated subtitles
 app.get("/api/subtitles", (req, res) => {
   try {
+    if (!fs.existsSync(subtitleDir)) return res.json([]);
     const files = fs.readdirSync(subtitleDir)
       .filter(file => file.endsWith(".html"))
       .map(file => ({
@@ -383,7 +382,7 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
     const content = req.file.buffer.toString("utf-8");
     const subtitleData = parser.fromSrt(content);
     
-    // Sanitize filename: remove extension, keep alphanumeric and hyphens
+    // Sanitize filename
     const originalName = path.parse(req.file.originalname).name;
     let sanitizedName = originalName
       .replace(/[^a-zA-Z0-9]/g, "-")
@@ -391,11 +390,9 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
       .replace(/^-|-$/g, "")
       .toLowerCase();
     
-    // Fallback if sanitized name is empty (e.g. all Chinese characters)
     if (!sanitizedName) {
       sanitizedName = `subtitle-${Date.now()}`;
     } else {
-      // Add a short hash or timestamp to avoid collisions
       sanitizedName = `${sanitizedName}-${Math.random().toString(36).substring(2, 7)}`;
     }
     
@@ -422,27 +419,5 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 
 // Serve generated subtitles
 app.use("/subtitle", express.static(subtitleDir));
-
-// Vite middleware for development
-async function startServer() {
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    app.use(express.static(path.join(__dirname, "dist")));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(__dirname, "dist", "index.html"));
-    });
-  }
-
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
-}
-
-startServer();
 
 export default app;
