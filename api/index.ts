@@ -161,24 +161,28 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
 
         /* Editor UI */
         #editor-panel {
-            margin-bottom: 4rem;
-            padding: 2rem;
-            background: rgba(0, 0, 0, 0.03);
-            border-radius: 24px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            z-index: 2000;
+            padding: 3rem 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             display: none; /* Hidden by default */
             flex-direction: column;
             gap: 1.5rem;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
         }
 
         #editor-panel.visible {
             display: flex;
         }
 
-        .toggle-editor-btn {
+        .toggle-editor-btn, .back-btn {
             position: fixed;
             top: 2rem;
-            right: 2rem;
             z-index: 1000;
             background: white;
             border: 1px solid rgba(0, 0, 0, 0.1);
@@ -191,9 +195,20 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
             cursor: pointer;
             box-shadow: 0 10px 20px rgba(0,0,0,0.05);
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .toggle-editor-btn:hover {
+        .toggle-editor-btn {
+            right: 2rem;
+        }
+
+        .back-btn {
+            left: 2rem;
+        }
+
+        .toggle-editor-btn:hover, .back-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 15px 30px rgba(0,0,0,0.1);
             border-color: black;
@@ -251,6 +266,10 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
 </head>
 <body>
     <div class="noise"></div>
+    <button class="back-btn" onclick="window.location.href='/'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back
+    </button>
     <button class="toggle-editor-btn" onclick="toggleEditor()">Settings</button>
     <div class="cover">
         <img src="https://picsum.photos/seed/${seed}/1920/1080?grayscale" alt="" />
@@ -272,6 +291,7 @@ function generateHtml(title: string, subtitleData: any[], seed: string, summary:
                 <button class="style-btn" onclick="updateStyle('font-size', '3.5rem', this)">Large</button>
                 <button class="style-btn" onclick="updateStyle('font-size', '4.5rem', this)">X-Large</button>
             </div>
+            <button class="style-btn" style="align-self: flex-end; margin-top: 1rem; background: black; color: white; padding: 0.75rem 2rem; border-radius: 100px;" onclick="toggleEditor()">Done</button>
         </div>
 
         <header>
