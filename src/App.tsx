@@ -33,8 +33,8 @@ export default function App() {
   }, []);
 
   const handleUpload = async (file: File) => {
-    if (!file.name.endsWith('.srt') && !file.name.endsWith('.vtt')) {
-      setError('Invalid format. Use .srt or .vtt');
+    if (!file.name.endsWith('.srt') && !file.name.endsWith('.vtt') && !file.name.endsWith('.ass')) {
+      setError('Invalid format. Use .srt, .vtt or .ass');
       return;
     }
 
@@ -142,7 +142,7 @@ export default function App() {
             {uploading ? 'Processing' : 'Upload Subtitle'}
             <input
               type="file"
-              accept=".srt,.vtt"
+              accept=".srt,.vtt,.ass"
               onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])}
               className="absolute inset-0 opacity-0 cursor-pointer"
             />

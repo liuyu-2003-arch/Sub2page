@@ -6,6 +6,7 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import SrtParser from "srt-parser-2";
 import { GoogleGenAI } from "@google/genai";
+import { parse as parseAss } from "ass-compiler";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -412,7 +413,20 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 
   try {
     const content = req.file.buffer.toString("utf-8");
-    const subtitleData = parser.fromSrt(content);
+    const extension = path.extname(req.file.originalname).toLowerCase();
+    let subtitleData: any[] = [];
+
+    if (extension === ".ass") {
+      const parsedAss = parseAss(content);
+      subtitleData = parsedAss.events.dialogue.map((d, i) => ({
+        id: i + 1,
+        startTime: d.Start,
+        endTime: d.End,
+        text: d.Text.combined.replace(/\{[^}]+\}/g, "").replace(/\\N/g, " "),
+      }));
+    } else {
+      subtitleData = parser.fromSrt(content);
+    }
     
     // Sanitize filename: remove extension, keep alphanumeric and hyphens
     const originalName = path.parse(req.file.originalname).name;
